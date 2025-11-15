@@ -1,0 +1,40 @@
+name: 预览部署（Pull Request）
+
+on:
+  # 当创建或更新 Pull Request 时触发
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    
+    steps:
+      # 1. 检出代码
+      - name: 📥 检出代码
+        uses: actions/checkout@v4
+      
+      # 2. 部署预览版本
+      - name: 🔍 部署预览到 Netlify
+        uses: nwtgck/actions-netlify@v2.1
+        with:
+          publish-dir: '.'
+          production-branch: main
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          deploy-message: "PR预览：${{ github.event.pull_request.title }}"
+          enable-pull-request-comment: true
+          enable-commit-comment: false
+          overwrites-pull-request-comment: true
+          alias: pr-${{ github.event.pull_request.number }}
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        timeout-minutes: 10
+      
+      # 3. 预览部署完成
+      - name: ✅ 预览就绪
+        if: success()
+        run: |
+          echo "🔍 PR 预览已生成！"
+          echo "查看 PR 评论获取预览链接"
+

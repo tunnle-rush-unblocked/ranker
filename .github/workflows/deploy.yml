@@ -1,0 +1,44 @@
+name: 自动部署到 Netlify
+
+on:
+  # 当推送到 main 分支时自动触发
+  push:
+    branches:
+      - main
+      - master
+  
+  # 允许手动触发
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      # 1. 检出代码
+      - name: 📥 检出代码
+        uses: actions/checkout@v4
+      
+      # 2. 部署到 Netlify
+      - name: 🚀 部署到 Netlify
+        uses: nwtgck/actions-netlify@v2.1
+        with:
+          publish-dir: '.'
+          production-branch: main
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          deploy-message: "自动部署：${{ github.event.head_commit.message }}"
+          enable-pull-request-comment: true
+          enable-commit-comment: true
+          overwrites-pull-request-comment: true
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        timeout-minutes: 10
+      
+      # 3. 部署成功通知
+      - name: ✅ 部署完成
+        if: success()
+        run: |
+          echo "🎉 网站已成功部署到 Netlify！"
+          echo "访问您的网站查看更新"
+

@@ -1,0 +1,26 @@
+{
+  "name": "netlify-auto-deploy",
+  "version": "1.0.0",
+  "description": "自动部署到 Netlify 的网站项目",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000 || python3 -m http.server 8000 || npx serve .",
+    "deploy": "netlify deploy --prod",
+    "deploy:draft": "netlify deploy",
+    "netlify:login": "netlify login",
+    "netlify:init": "netlify init"
+  },
+  "keywords": [
+    "netlify",
+    "deploy",
+    "website",
+    "auto-deploy",
+    "static-site"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "netlify-cli": "^17.0.0"
+  }
+}
+
